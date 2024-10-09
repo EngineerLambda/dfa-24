@@ -8,6 +8,8 @@ from PyPDF2 import PdfReader
 import docx
 from pydantic import BaseModel, Field
 from typing import List
+import pandas as pd
+from io import StringIO
 
 st.set_page_config(page_title="Teacher question and answer practice", page_icon="✍")
 # Define the Pydantic Model
@@ -83,6 +85,17 @@ class LambdaStreamlitLoader:
         else:
             st.error("Unsupported file format!")
 
+# function to create csv from qa_data
+def create_csv(qa_data):
+    qa_df = pd.DataFrame({
+        "Question": qa_data.questions,
+        "Answer": qa_data.answers
+    })
+    
+    csv_buffer = StringIO()
+    qa_df.to_csv(csv_buffer, index=False)
+
+    return csv_buffer.getvalue()
 
 # Template for guiding the student on their answers
 help_template = """
@@ -148,14 +161,25 @@ with st.sidebar:
                 except Exception as e:
                     st.error(f"An error occurred during generation: {e}")
 
-
 # Main Content Area
 st.title("Question and Answer Session")
 
 if st.session_state.questions_generated and st.session_state.qa_data:
     qa_data = st.session_state.qa_data
+    if qa_data:
+        with st.sidebar:
+            csv_data = create_csv(st.session_state.qa_data)
+
+            st.download_button(
+                label="Download Q&A as CSV",
+                data=csv_data,
+                file_name="qa_data.csv",
+                mime="text/csv"
+            )
+            
     questions = qa_data.questions
     answers = qa_data.answers
+    
 
     if st.session_state.count < len(questions):
         current_index = st.session_state.count

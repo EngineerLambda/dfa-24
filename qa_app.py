@@ -9,7 +9,7 @@ import docx
 from pydantic import BaseModel, Field
 from typing import List
 
-
+st.set_page_config(page_title="Teacher question and answer practice", page_icon="✍")
 # Define the Pydantic Model
 class QAParser(BaseModel):
     questions: List[str] = Field(..., description="List of questions generated")

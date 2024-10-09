@@ -162,7 +162,7 @@ if st.session_state.questions_generated and st.session_state.qa_data:
         current_question = questions[current_index]
         current_answer = answers[current_index]
 
-        st.markdown(f"### Question {current_index + 1}")
+        st.markdown(f"### Question {current_index + 1}/{len(questions)}")
         st.write(f"**Question:** {current_question}")
 
         with st.expander("Reveal Answer"):
